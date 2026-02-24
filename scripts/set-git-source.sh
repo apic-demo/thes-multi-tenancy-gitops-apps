@@ -12,13 +12,13 @@ if [ -z ${GIT_ORG} ]; then echo "Please set GIT_ORG when running script, optiona
 
 GIT_BRANCH=${GIT_BRANCH:-master}
 GIT_BASEURL=${GIT_BASEURL:-https://github.com}
-GIT_GITOPS=${GIT_GITOPS:-multi-tenancy-gitops.git}
+GIT_GITOPS=${GIT_GITOPS:-thes-multi-tenancy-gitops.git}
 GIT_GITOPS_BRANCH=${GIT_GITOPS_BRANCH:-${GIT_BRANCH}}
-GIT_GITOPS_INFRA=${GIT_GITOPS_INFRA:-multi-tenancy-gitops-infra.git}
+GIT_GITOPS_INFRA=${GIT_GITOPS_INFRA:-thes-multi-tenancy-gitops-infra.git}
 GIT_GITOPS_INFRA_BRANCH=${GIT_GITOPS_INFRA_BRANCH:-${GIT_BRANCH}}
-GIT_GITOPS_SERVICES=${GIT_GITOPS_SERVICES:-multi-tenancy-gitops-services.git}
+GIT_GITOPS_SERVICES=${GIT_GITOPS_SERVICES:-thes-multi-tenancy-gitops-services.git}
 GIT_GITOPS_SERVICES_BRANCH=${GIT_GITOPS_SERVICES_BRANCH:-${GIT_BRANCH}}
-GIT_GITOPS_APPLICATIONS=${GIT_GITOPS_APPLICATIONS:-multi-tenancy-gitops-apps.git}
+GIT_GITOPS_APPLICATIONS=${GIT_GITOPS_APPLICATIONS:-thes-multi-tenancy-gitops-apps.git}
 GIT_GITOPS_APPLICATIONS_BRANCH=${GIT_GITOPS_APPLICATIONS_BRANCH:-${GIT_BRANCH}}
 HELM_REPOURL=${HELM_REPOURL:-https://charts.cloudnativetoolkit.dev}
 
@@ -28,11 +28,11 @@ echo "Setting kustomization patches to ${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS_IN
 echo "Setting kustomization patches to ${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS_SERVICES} on branch ${GIT_GITOPS_SERVICES_BRANCH}"
 echo "Setting kustomization patches to ${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS_APPLICATIONS} on branch ${GIT_GITOPS_APPLICATIONS_BRANCH}"
 
-# This is a temporal workaround while someo of the assets in this repo still have the repoURL hardcoded to https://github.com/cloud-native-toolkit-demos/multi-tenancy-gitops-apps.git
+# This is a temporal workaround while someo of the assets in this repo still have the repoURL hardcoded to https://github.com/cloud-native-toolkit-demos/thes-multi-tenancy-gitops-apps.git
 find ${ROOTDIR}/ -name '*.yaml' -print0 |
 while IFS= read -r -d '' File; do
     if grep -q "kind: Application" "$File"; then
-      sed -i'.bak' -e "s#https://github.com/cloud-native-toolkit-demos/multi-tenancy-gitops-apps.git#${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS_APPLICATIONS}#" $File
+      sed -i'.bak' -e "s#https://github.com/cloud-native-toolkit-demos/thes-multi-tenancy-gitops-apps.git#${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS_APPLICATIONS}#" $File
       sed -i'.bak' -e "s#targetRevision: master#targetRevision: ${GIT_GITOPS_APPLICATIONS_BRANCH}#" $File
       rm "${File}.bak"
     fi
@@ -42,7 +42,7 @@ done
 find ${ROOTDIR}/ -name '*.yaml' -print0 |
 while IFS= read -r -d '' File; do
   if grep -q "kind: Application" "$File"; then
-    #echo "$File"
+    echo "$File"
     sed -i'.bak' -e "s#\${GIT_BASEURL}/\${GIT_ORG}/\${GIT_GITOPS}#${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS}#" $File
     sed -i'.bak' -e "s#\${GIT_GITOPS_BRANCH}#${GIT_GITOPS_BRANCH}#" $File
     sed -i'.bak' -e "s#\${GIT_BASEURL}/\${GIT_ORG}/\${GIT_GITOPS_INFRA}#${GIT_BASEURL}/${GIT_ORG}/${GIT_GITOPS_INFRA}#" $File
